@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Défi 12 Jours : Transformation Positive</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; padding: 20px; }
+    h1 { text-align:center; color: #5a2d82; margin-bottom: 10px; }
+    .day { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .day h2 { margin-top: 0; color: #2980B9; }
+    .day p { margin: 5px 0; }
+    .complete-btn { margin-top:10px; background: #27AE60; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+    .complete-btn.done { background: #ccc; cursor: default; }
+    #exportBtn { background: #ff69b4; color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer; display: block; margin: 20px auto; }
+  </style>
+</head>
+<body>
+  <h1>🌟 Défi 12 Jours : Transformation Positive</h1>
+  <div id="challenge">
+    <!-- Days will be inserted here -->
+  </div>
+  <button id="exportBtn" onclick="exportPDF()">📄 Télécharger le résumé du défi</button>
+
+  <script>
+    // 12-day program data
+    const program = [
+      { day:1, title:"Gratitude du Matin", desc:"Note 3 choses pour lesquelles tu es reconnaissant·e aujourd'hui."},
+      { day:2, title:"Intention Clair & Puissante", desc:"Formule une intention simple pour orienter ta journée."},
+      { day:3, title:"Mini-Méditation (5 min)", desc:"Pratique une méditation guidée de 5 minutes."},
+      { day:4, title:"Affirmations Positives", desc:"Écris et répète 3 affirmations puissantes devant le miroir."},
+      { day:5, title:"Journal de Bilan", desc:"Consigne un point positif et une leçon de ta journée."},
+      { day:6, title:"Pause Créative", desc:"Exprime-toi librement (dessin, écriture, collage) pendant 10 min."},
+      { day:7, title:"Respiration Consciente", desc:"Pratique 3 séries de 5 respirations profondes."},
+      { day:8, title:"Acte de Générosité", desc:"Fais un petit acte bienveillant pour quelqu’un."},
+      { day:9, title:"Digital Detox (1h)", desc:"Éteins tes écrans et savoure le silence pendant 1 heure."},
+      { day:10, title:"Vision Board", desc:"Collecte des images ou mots inspirants pour tes rêves."},
+      { day:11, title:"Autocompassion", desc:"Écris une lettre de bienveillance à toi-même."},
+      { day:12, title:"Révision & Célébration", desc:"Relis tes notes, célèbre tes réussites et fixe la prochaine étape."}
+    ];
+
+    const container = document.getElementById('challenge');
+    program.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'day';
+      div.innerHTML = `<h2>Jour ${item.day} : ${item.title}</h2><p>${item.desc}</p><button class="complete-btn" onclick="markDone(this)">Marquer comme fait</button>`;
+      container.appendChild(div);
+    });
+
+    function markDone(btn) {
+      if(btn.classList.contains('done')) return;
+      btn.textContent = "Fait ✅";
+      btn.classList.add('done');
+    }
+
+    function exportPDF() {
+      html2pdf().from(document.body).set({margin:0.5, filename:'defi12jours.pdf', html2canvas:{scale:2}}).save();
+    }
+  </script>
+</body>
+</html>
