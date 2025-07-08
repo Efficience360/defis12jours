@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Défi 12 Jours Magique</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    /* Magical starry background */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0b0033;
+      color: #f8f4ff;
+      padding: 20px;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+        radial-gradient(2px 2px at 30% 40%, #fff, transparent),
+        radial-gradient(1px 1px at 70% 25%, #fff, transparent),
+        radial-gradient(2px 2px at 40% 80%, #fff, transparent),
+        radial-gradient(1px 1px at 80% 60%, #fff, transparent);
+      background-size: 200px 200px;
+      animation: twinkle 3s infinite alternate;
+    }
+    @keyframes twinkle {
+      from { background-color: #0b0033; }
+      to { background-color: #1a004d; }
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 10px;
+      text-shadow: 0 0 8px #ff85c0, 0 0 16px #ff69b4;
+    }
+    .day {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #ff69b4;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(255,105,180,0.5);
+    }
+    .day h2 {
+      margin: 0;
+      font-size: 1.3em;
+      color: #ffb3dc;
+      text-shadow: 0 0 4px #ff69b4;
+    }
+    .day p {
+      margin: 8px 0;
+      color: #ffd1e6;
+    }
+    .day textarea {
+      width: 100%;
+      min-height: 100px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid #ffb3dc;
+      border-radius: 8px;
+      color: #fff;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .complete-btn {
+      background: #27AE60;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 6px #27AE60;
+      margin-top: 10px;
+      transition: transform 0.2s;
+    }
+    .complete-btn.done {
+      background: #ccc;
+      color: #666;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    .complete-btn:hover:not(.done) {
+      transform: scale(1.05);
+    }
+    #exportBtn {
+      display: block;
+      margin: 30px auto;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 0 8px #ff85c0;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Défi 12 Jours Magique ✨</h1>
+  <p style="text-align:center; color:#ffd1e6;">Chaque jour, plonge 15 minutes dans un rituel magique pour transformer ta vie.</p>
+  <div id="challenge">
+    <!-- Daily challenges injected by JS -->
+  </div>
+  <button id="exportBtn" onclick="exportPDF()">📄 Télécharger le résumé magique</button>
+
+  <script>
+    const program = [
+      { day:1, title:"Éveil de gratitude", desc:"Note 3 choses merveilleuses de ta vie et ressens la gratitude."},
+      { day:2, title:"Écriture d'intention", desc:"Écris une intention claire et puissante pour guider ta journée."},
+      { day:3, title:"Méditation cosmique", desc:"Pratique 5 min de méditation guidée sous un ciel étoilé imaginaire."},
+      { day:4, title:"Affirmations enchantées", desc:"Récite 3 affirmations qui résonnent en toi comme des sortilèges positifs."},
+      { day:5, title:"Journal des miracles", desc:"Consigne un petit miracle ou une synchronicité observée aujourd'hui."},
+      { day:6, title:"Création magique", desc:"Dessine ou écris librement pendant 15 min, laisse ton intuition guider."},
+      { day:7, title:"Respiration d'étoiles", desc:"Fais 3 cycles de respiration profonde en visualisant des étoiles."},
+      { day:8, title:"Acte de lumière", desc:"Pose un geste bienveillant pour illuminer la journée de quelqu'un."},
+      { day:9, title:"Détox lunaire", desc:"Éloigne-toi des écrans et médite dans la pénombre pendant 15 min."},
+      { day:10, title:"Création d'un vision board", desc:"Assemble images et mots qui incarnent tes rêves magiques."},
+      { day:11, title:"Lettre d'amour à soi", desc:"Écris une lettre pleine de bienveillance pour toi-même."},
+      { day:12, title:"Célébration cosmique", desc:"Relis ton parcours, célèbre chaque victoire et fixe ton prochain défi."}
+    ];
+
+    const container = document.getElementById('challenge');
+
+    program.forEach(item => {
+      const stored = JSON.parse(localStorage.getItem('defi12-'+item.day)) || {};
+      const div = document.createElement('div');
+      div.className = 'day';
+      div.innerHTML = `
+        <h2>Jour ${item.day} : ${item.title}</h2>
+        <p>${item.desc}</p>
+        <textarea placeholder="Écris ici ton ressenti..." id="journal-${item.day}">${stored.journal||''}</textarea>
+        <button class="complete-btn ${stored.done? 'done':''}" id="btn-${item.day}">${stored.done? 'Fait ✅':'Marquer comme fait'}</button>
+      `;
+      container.appendChild(div);
+      const btn = document.getElementById('btn-'+item.day);
+      const ta = document.getElementById('journal-'+item.day);
+      if(!stored.done) {
+        btn.addEventListener('click', () => {
+          btn.textContent = 'Fait ✅';
+          btn.classList.add('done');
+          saveDay(item.day, ta.value, true);
+        });
+      }
+      ta.addEventListener('input', () => saveDay(item.day, ta.value, stored.done));
+    });
+
+    function saveDay(day, journal, done) {
+      localStorage.setItem('defi12-'+day, JSON.stringify({journal, done}));
+    }
+
+    function exportPDF(){
+      html2pdf().from(document.body).set({
+        margin:0.5, filename:'defi12jours_magique.pdf', html2canvas:{scale:2}
+      }).save();
+    }
+  </script>
+</body>
+</html>
